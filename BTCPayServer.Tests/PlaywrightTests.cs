@@ -2202,7 +2202,7 @@ namespace BTCPayServer.Tests
             var (_, storeId) = await s.CreateNewStore();
             await s.GoToStore();
             await s.GenerateWallet(isHotWallet: true);
-            await s.AddLightningNode("CLightning", false);
+            await s.AddLightningNode(LightningConnectionType.CLightning, false);
             await s.AddUserToStore(storeId, manager, "Manager");
             await s.AddUserToStore(storeId, employee, "Employee");
             await s.AddUserToStore(storeId, guest, "Guest");
@@ -2232,7 +2232,7 @@ namespace BTCPayServer.Tests
             foreach (var path in storeSettingsPaths)
             {   // should have manage access to settings, hence should see submit buttons or create links
                 s.TestLogs.LogInformation($"Checking access to store page {path} as owner");
-                await s.AssertPageAccess(true, $"stores/{storeId}/{path}");
+                await s.AssertPageAccess(true, $"/stores/{storeId}/{path}");
                 if (path != "payout-processors")
                 {
                     var saveButton = s.Page.GetByRole(AriaRole.Button, new() { Name = "Save" });
@@ -2264,7 +2264,7 @@ namespace BTCPayServer.Tests
             foreach (var path in storeSettingsPaths)
             {   // should have view access to settings, but no submit buttons or create links
                 s.TestLogs.LogInformation($"Checking access to store page {path} as manager");
-                await s.AssertPageAccess(true, $"stores/{storeId}/{path}");
+                await s.AssertPageAccess(true, $"/stores/{storeId}/{path}");
                 Assert.False(await s.Page.GetByRole(AriaRole.Button, new() { Name = "Save" }).IsVisibleAsync());
             }
             await s.Logout();
@@ -2289,7 +2289,7 @@ namespace BTCPayServer.Tests
             foreach (var path in storeSettingsPaths)
             {   // should not have access to settings
                 s.TestLogs.LogInformation($"Checking access to store page {path} as employee");
-                await s.AssertPageAccess(false, $"stores/{storeId}/{path}");
+                await s.AssertPageAccess(false, $"/stores/{storeId}/{path}");
             }
             await s.Logout();
 
@@ -2313,7 +2313,7 @@ namespace BTCPayServer.Tests
             foreach (var path in storeSettingsPaths)
             {   // should not have access to settings
                 s.TestLogs.LogInformation($"Checking access to store page {path} as guest");
-                await s.AssertPageAccess(false, $"stores/{storeId}/{path}");
+                await s.AssertPageAccess(false, $"/stores/{storeId}/{path}");
             }
             await s.Logout();
         }
